@@ -1,4 +1,6 @@
-module SyntheticObjects
+module TestImagesAdding
+
+
 
 include("Pollen3D.jl")
 include("HollowSphere.jl")

@@ -3,6 +3,10 @@ uuid = "e7028c27-0967-45e9-8fdb-dbc10ccb2b0a"
 authors = ["Hossein Zarei Oshtolagh"]
 version = "1.0.0-DEV"
 
+[deps]
+FourierTools = "b18b359b-aebc-45ac-a139-9c0ccbb2871e"
+IndexFunArrays = "613c443e-d742-454e-bfc6-1d7f8dd76566"
+
 [compat]
 julia = "1"
 
