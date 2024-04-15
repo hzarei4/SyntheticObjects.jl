@@ -1,11 +1,11 @@
 using IndexFunArrays:xx, yy, zz, phiphi, rr
 
-export SpokesObject
+export spokes_object
 
 
 
 """
-    SpokesObject(imgSize = (256, 256), numSpikes = 21, continuous = true, makeRound = true)
+    spokes_object(imgSize = (256, 256), numSpikes = 21, continuous = true, makeRound = true)
 
 Generates a 2D or 3D representation of a spokes object.
 
@@ -20,10 +20,10 @@ Generates a 2D or 3D representation of a spokes object.
 
 # Example
 ```julia
-SpokesObject((512, 512), 30, false, false)
+spokes_object((512, 512), 30, false, false)
 ```
 """
-function SpokesObject(imgSize = (256, 256), numSpikes = 21, continuous = true, makeRound = true)
+function spokes_object(imgSize = (256, 256), numSpikes = 21, continuous = true, makeRound = true)
     if makeRound
         obj = zeros(imgSize)
         rr_coords = rr(imgSize) #, "freq")

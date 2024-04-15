@@ -1,10 +1,10 @@
 using FourierTools: shift, conv_psf, rotate
 using IndexFunArrays:gaussian
 
-export filaments3D, draw_line!
+export filaments3D, draw_line!, filaments_new!, filaments_rand!
 
 """
-    Filaments(asize = [100, 100, 100], Zfoc = asize[3] ÷ 2)
+    filaments(asize = [100, 100, 100], Zfoc = asize[3] ÷ 2)
 
 Create a 3D representation of filaments.
 
@@ -17,10 +17,14 @@ Create a 3D representation of filaments.
 
 # Example
 ```julia
-Filaments([200, 200, 200])
+filaments((200, 200, 200))
 ```
 """
-function filaments3D(sz = (128,128,128); num_filaments=10, Zfoc = sz[3] ÷ 2, thickness=0.8)
+function filaments3D(sz = (128,128,128); num_filaments=10, seeding=true, Zfoc = sz[3] ÷ 2, thickness=0.8)
+    if seeding
+        Random.seed!(42)
+    end
+
     obj = zeros(sz)  # Equivalent of newim
     mid = sz .÷ 2
 
@@ -71,21 +75,40 @@ function filaments3D(sz = (128,128,128); num_filaments=10, Zfoc = sz[3] ÷ 2, th
     return obj
 end
 
+function filaments_rand!(arr; num_filaments=10, seeding=true)
+    if seeding
+        Random.seed!(42)
+    end
+    
+    for i in 1:num_filaments
+        #println("Drawing line $i")
+        draw_line!(arr, Tuple(rand(10.0:size(arr, 1)-10, (1, 3))),  Tuple(rand(10.0:size(arr, 1)-10, (1, 3))), thickness= rand(0.0:2.0))
+    end
+
+end
+
+
 function sqr_dist_to_line(p::CartesianIndex, start, n)
     # Implementations for is_on_line
     d = Tuple(p) .- start
-    return sum(abs2.(d .- sum(d.*n).*n)), sum(d.*n);
+    return sum(abs2.(d .- sum(d.*n).*n)), sum(d.*n), sqrt(sum(abs2.(sum(d.*n).*n)));
 end
 
-function draw_line!(arr, start, stop, thickness=0.5)
+function draw_line!(arr, start, stop; thickness=0.5)
     direction = stop .- start
     line_length = sqrt(sum(abs2.(direction)))
     n = direction ./ line_length
     # Implementations for draw_line
     for p in CartesianIndices(arr)
-        d2,t =sqr_dist_to_line(p, start, n)
-        if (t> 0 && t < line_length && d2 < 4*thickness^2)
+        if (sqrt(sum(abs2.(Tuple(p) .- start))) < 2*thickness  || sqrt(sum(abs2.(Tuple(p) .- stop))) < 2*thickness)
+            arr[p] = exp(-min(sum(abs2.(Tuple(p) .- start)), sum(abs2.(Tuple(p) .- stop)))/(2*thickness^2));
+        end
+
+        d2, t =sqr_dist_to_line(p, start, n)
+        if (t > 0 && t < line_length && d2 < 4*thickness^2)
             arr[p] = exp(-d2/(2*thickness^2));
         end
+
     end
 end
+

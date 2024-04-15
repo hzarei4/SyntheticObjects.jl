@@ -1,10 +1,10 @@
 using IndexFunArrays:gaussian
 using FourierTools:conv_psf, conv
 
-export TestSpheres
+export test_spheres
 
 """
-    TestSpheres(asize = [200, 200, 100], ScaleX = 25, d = 100, Zfoc = asize[3] ÷ 2)
+test_spheres(asize = [200, 200, 100], ScaleX = 25, d = 100, Zfoc = asize[3] ÷ 2)
 
 Create a 3D representation of test spheres.
 
@@ -19,10 +19,10 @@ Create a 3D representation of test spheres.
 
 # Example
 ```julia
-TestSpheres([300, 300, 150], 50, 200, 75)
+test_spheres([300, 300, 150], 50, 200, 75)
 ```
 """
-function TestSpheres(asize = [200, 200, 100], ScaleX = 25, d = 100, Zfoc = asize[3] ÷ 2)
+function test_spheres(asize = [200, 200, 100], ScaleX = 25, d = 100, Zfoc = asize[3] ÷ 2)
     # Bead Creation
     strength = 255
     sphere_radius = 90 / ScaleX 

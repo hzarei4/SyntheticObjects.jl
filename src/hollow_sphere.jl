@@ -40,7 +40,7 @@ end
 
 
 """
-    HollowSphere(sz::Vector{Int}, rad1::Float64, thick::Float64=1.0, p::Vector{Float64}=[1.0, 1.0, 1.0])
+hollow_sphere(sz::Vector{Int}, rad1::Float64, thick::Float64=1.0, p::Vector{Float64}=[1.0, 1.0, 1.0])
 
 Create a 3D representation of a hollow sphere.
 
@@ -55,7 +55,7 @@ Create a 3D representation of a hollow sphere.
 
 # Example
 ```julia
-HollowSphere([128, 128, 128], 50.0, 10.0, [1.0, 1.0, 1.0])
+hollow_sphere([128, 128, 128], 50.0, 10.0, [1.0, 1.0, 1.0])
 ```
 """
 function hollow_sphere(sz::Vector{Int}, rad1::Float64, thick::Float64=1.0, p::Vector{Float64}=[1.0, 1.0, 1.0])

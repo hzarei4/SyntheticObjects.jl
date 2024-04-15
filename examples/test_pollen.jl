@@ -9,3 +9,6 @@ filaments = filaments3D(sz);
 @ve pollen filaments
 volume(pollen)
 volume(filaments)
+
+
+arr = zeros(sz)

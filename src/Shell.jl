@@ -1,7 +1,7 @@
 using IndexFunArrays:xx, yy, zz
 using FourierTools:rotate
 
-export Shell
+export shell
 
 # Generates a shell of variable size, width, and rotation
 # a=myShell(n,p,w,rot)
@@ -11,7 +11,7 @@ export Shell
 # rot: rotation angles [phi theta psi]. Default 0 0 0
 
 """
-    Shell(n = 200, p =0.5, w = 1.0, rot_angle = 0.0, rot_plane = (1, 2))
+shell(n = 200, p =0.5, w = 1.0, rot_angle = 0.0, rot_plane = (1, 2))
 
 Generates a 3D representation of a shell of variable size, width, and rotation.
 
@@ -27,10 +27,10 @@ Generates a 3D representation of a shell of variable size, width, and rotation.
 
 # Example
 ```julia
-Shell(300, 0.6, 1.0, 0.2, (2, 3))
+shell(300, 0.6, 1.0, 0.2, (2, 3))
 ```
 """
-function Shell(n = 200, p =0.5, w = 1.0, rot_angle = 0.0, rot_plane = (1, 2))
+function shell(n = 200, p =0.5, w = 1.0, rot_angle = 0.0, rot_plane = (1, 2))
     asize = (n, n, n)
 
     r = asize[1] * 0.4  # Radius 
