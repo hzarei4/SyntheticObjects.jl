@@ -1,7 +1,7 @@
 using FourierTools: shift, conv_psf, rotate
 using IndexFunArrays:gaussian
 
-export Filaments
+export filaments3D, draw_line!
 
 """
     Filaments(asize = [100, 100, 100], Zfoc = asize[3] ÷ 2)
@@ -20,16 +20,16 @@ Create a 3D representation of filaments.
 Filaments([200, 200, 200])
 ```
 """
-function Filaments(asize = [100, 100, 100], Zfoc = asize[3] ÷ 2)
-    obj = zeros(Tuple(asize))  # Equivalent of newim
-    mid = asize .÷ 2
+function filaments3D(sz = (128,128,128); num_filaments=10, Zfoc = sz[3] ÷ 2, thickness=0.8)
+    obj = zeros(sz)  # Equivalent of newim
+    mid = sz .÷ 2
 
     # Focal Slice 
-    obj[mid[1] - floor(Int, 0.3 * asize[1]) : mid[1] + floor(Int, 0.3 * asize[1]), mid[2], Zfoc] .= 10
+    obj[mid[1] - floor(Int, 0.3 * sz[1]) : mid[1] + floor(Int, 0.3 * sz[1]), mid[2], Zfoc] .= 10
     focalSlice = obj[:, :, Zfoc]
 
     # Replace with Gaussian blurring function 
-    myspot2 = gaussian(size(focalSlice), offset=Tuple(mid[1:2]), sigma=0.8)  
+    myspot2 = gaussian(size(focalSlice), offset=Tuple(mid[1:2]), sigma=thickness)  
     focalSlice = conv_psf(focalSlice, myspot2)  # Assuming Images.jl has 'conv'
 
     obj[:, :, Zfoc] = focalSlice
@@ -48,21 +48,20 @@ function Filaments(asize = [100, 100, 100], Zfoc = asize[3] ÷ 2)
     obj[:,:,Zfoc]=focalSlice2;
 
     # Additional Filaments
-    nb = 30
-    randAx = floor.(Int, 2 * rand(nb)) .+ 1 
-    randShifts = rand(-20:20, nb)
-    randRots = 5 .* rand(nb)
-    tmp3d = zeros(Tuple(asize))
+    randAx = floor.(Int, 2 * rand(num_filaments)) .+ 1 
+    randShifts = rand(-20:20, num_filaments)
+    randRots = 5 .* rand(num_filaments)
+    tmp3d = zeros(Tuple(sz))
     tmp3d[:, :, Zfoc] = a + b
 
-    for i in 1:floor(Int, nb / 2.0)
+    for i in 1:num_filaments÷2
         # Need implementations for rotate, select_rois, shift
         tmp = shift(rotate(tmp3d, randRots[i], filter(!=(randAx[i]), Tuple([1, 2, 3]))), (randShifts[i], 0, 0))
         obj += tmp  # Note: Julia indexing
     end
 
     # Similar loop for the second half of randAx
-    for i in floor(Int, nb / 2.0):nb
+    for i in num_filaments÷2:num_filaments
         # Need implementations for rotate, select_rois, shift
         tmp = shift(rotate(tmp3d, randRots[i]*pi, filter(!=(randAx[i]), Tuple([1, 2, 3]))), (0, randShifts[i], 0))
         obj += tmp  # Note: Julia indexing
@@ -70,4 +69,23 @@ function Filaments(asize = [100, 100, 100], Zfoc = asize[3] ÷ 2)
 
     obj[obj .< 0] .= 0  # Clipping
     return obj
+end
+
+function sqr_dist_to_line(p::CartesianIndex, start, n)
+    # Implementations for is_on_line
+    d = Tuple(p) .- start
+    return sum(abs2.(d .- sum(d.*n).*n)), sum(d.*n);
+end
+
+function draw_line!(arr, start, stop, thickness=0.5)
+    direction = stop .- start
+    line_length = sqrt(sum(abs2.(direction)))
+    n = direction ./ line_length
+    # Implementations for draw_line
+    for p in CartesianIndices(arr)
+        d2,t =sqr_dist_to_line(p, start, n)
+        if (t> 0 && t < line_length && d2 < 4*thickness^2)
+            arr[p] = exp(-d2/(2*thickness^2));
+        end
+    end
 end

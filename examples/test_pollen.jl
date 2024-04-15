@@ -1,6 +1,11 @@
 using SyntheticObjects
+using View5D
 
-arr = Pollen3D();
+sz = (128,128,128)
 
+pollen = pollen3D(sz);
+filaments = filaments3D(sz);
 
-@vv arr
+@ve pollen filaments
+volume(pollen)
+volume(filaments)

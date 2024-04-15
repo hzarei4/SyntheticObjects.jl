@@ -1,7 +1,7 @@
 using IndexFunArrays:rr
 using FourierTools:ift
 
-export HollowSphere
+export hollow_sphere
 
 """
     FourierSphere(sz::Vector{Int}, d::Float64, pixelsize::Vector{Float64}=[1.0, 1.0, 1.0])
@@ -58,7 +58,7 @@ Create a 3D representation of a hollow sphere.
 HollowSphere([128, 128, 128], 50.0, 10.0, [1.0, 1.0, 1.0])
 ```
 """
-function HollowSphere(sz::Vector{Int}, rad1::Float64, thick::Float64=1.0, p::Vector{Float64}=[1.0, 1.0, 1.0])
+function hollow_sphere(sz::Vector{Int}, rad1::Float64, thick::Float64=1.0, p::Vector{Float64}=[1.0, 1.0, 1.0])
     radinner = 2 .* rad1 .- thick ./ 2
     radout = 2 .* rad1 .+ thick ./ 2
     radratio = radout ./ radinner

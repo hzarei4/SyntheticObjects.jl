@@ -1,8 +1,8 @@
 module SyntheticObjects
 
-include("Pollen3D.jl")
-include("HollowSphere.jl")
-include("Filaments.jl")
+include("pollen3D.jl")
+include("hollow_sphere.jl")
+include("filaments3D.jl")
 include("SpokesObject.jl")
 include("Shell.jl")
 

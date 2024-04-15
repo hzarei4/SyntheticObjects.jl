@@ -1,7 +1,7 @@
 using IndexFunArrays:rr, xx, yy, zz, phiphi
 using FourierTools: shift
 
-export Pollen3D
+export pollen3D
 
 """
     Pollen3D(sv = (128, 128, 128), dphi::Float64=0.0, dtheta::Float64=0.0)
@@ -10,8 +10,8 @@ Create a 3D representation of a pollen grain.
 
 # Arguments
 - `sv::Tuple`: A tuple of three integers representing the size of the volume in which the pollen grain will be created. Default is (128, 128, 128).
-- `dphi::Float64`: A float representing the phi angle shift. Default is 0.0.
-- `dtheta::Float64`: A float representing the theta angle shift. Default is 0.0.
+- `dphi::Float64`: A float representing the phi angle offset in radians. Default is 0.0.
+- `dtheta::Float64`: A float representing the theta angle offset in radians. Default is 0.0.
 
 # Returns
 - `ret::Array{Float64}`: A 3D array representing the pollen grain.
@@ -21,7 +21,7 @@ Create a 3D representation of a pollen grain.
 Pollen3D((256, 256, 256), 0.0, 0.0)
 ```
 """
-function Pollen3D(sv = (128, 128, 128), dphi::Float64=0.0, dtheta::Float64=0.0)
+function pollen3D(sv = (128, 128, 128); dphi::Float64=0.0, dtheta::Float64=0.0, rel_width=1/50)
     x = xx(sv)
     y = yy(sv)
     z = zz(sv)
@@ -47,11 +47,11 @@ function Pollen3D(sv = (128, 128, 128), dphi::Float64=0.0, dtheta::Float64=0.0)
 
     ret = rr(sv) .<= c
     ret = Array{Float64}(ret)
-    ret .= (ret .*((rr(sv) .> (c .- sv[1]/100)))) 
+    ret .= (ret .*((rr(sv) .> (c .- sv[1]*rel_width)))) 
     ret = permutedims(ret, [1, 3, 2]) 
     
     ret = abs.(shift(ret, (-round(Int, sv[1]/20), 0 ,0)))
-    ret[ret .< 0.5] .= 0
+    ret[ret .< 0.5] .= 0 # reoves some rounding problems
     # ret = gaussf(ret, 0.5)  
 
     return ret
