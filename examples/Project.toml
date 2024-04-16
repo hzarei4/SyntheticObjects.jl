@@ -1,5 +1,6 @@
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+FourierTools = "b18b359b-aebc-45ac-a139-9c0ccbb2871e"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 SyntheticObjects = "e7028c27-0967-45e9-8fdb-dbc10ccb2b0a"
 View5D = "90d841e0-6953-4e90-9f3a-43681da8e949"
