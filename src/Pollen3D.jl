@@ -56,3 +56,40 @@ function pollen3D(sv = (128, 128, 128); dphi::Float64=0.0, dtheta::Float64=0.0, 
 
     return ret
 end
+
+
+function pollen3D!(arr, sv = size(arr); dphi::Float64=0.0, dtheta::Float64=0.0, rel_width=1/50)
+    x = xx(sv)
+    y = yy(sv)
+    z = zz(sv)
+
+    m = (x .!= 0) 
+    phi = zeros(size(x))  # Allocate
+    phi[m] = atan.(y[m], x[m])
+
+    phi .= phi .+ dphi  
+
+    m = (z .!= 0)
+    theta = zeros(size(x)) # Allocate
+    theta[m] = asin.(z[m] ./ sqrt.(x[m].^2 + y[m].^2 + z[m].^2))
+
+    theta .= theta .+ dtheta
+
+    
+    a = abs.(cos.(theta .* 20))
+    # b=abs.(sin.(phi.*(cos.(theta).*10.0 .+1.0)))
+    b = abs.(sin.(phi .* sqrt.(20^2 .* cos.(theta)) .- theta .+ pi/2)) 
+    # b=abs.(cos.(phi.*9));
+    c = ((0.4*sv[1] .+ (a .* b).^5 * sv[1]/20.0) .+ cos.(phi) .* sv[1]/20) 
+
+    ret = rr(sv) .<= c
+    ret = Array{Float64}(ret)
+    ret .= (ret .*((rr(sv) .> (c .- sv[1]*rel_width)))) 
+    ret = permutedims(ret, [1, 3, 2]) 
+    
+    ret = abs.(shift(ret, (-round(Int, sv[1]/20), 0 ,0)))
+    ret[ret .< 0.5] .= 0 # reoves some rounding problems
+    # ret = gaussf(ret, 0.5)  
+
+    return ret
+end

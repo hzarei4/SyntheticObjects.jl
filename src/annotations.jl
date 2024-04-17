@@ -91,7 +91,7 @@ function annotate_string!(cr, c, arr, string_to_write::AbstractString, font_size
     move_to(cr, xy...);
     show_text(cr, string_to_write);
 
-    arr[:, :, i1] = matrix_read(c)
+    arr[:, :, i1] = matrix_read(c)./maximum(matrix_read(c))
 
     set_source_rgb(cr, 0.0, 0.0, 0.0);    # light gray
     rectangle(cr, 0.0, 0.0, c.height, c.width); # background

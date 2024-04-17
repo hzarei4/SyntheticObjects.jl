@@ -1,5 +1,6 @@
 using FourierTools: shift, conv_psf, rotate
 using IndexFunArrays:gaussian
+using Random
 
 export filaments3D, draw_line!, filaments_new!, filaments_rand!
 
