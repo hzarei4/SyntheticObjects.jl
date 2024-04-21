@@ -1,115 +1,114 @@
-using FourierTools: shift, conv_psf, rotate
 using IndexFunArrays:gaussian
 using Random
 
-export filaments3D, draw_line!, filaments_new!, filaments_rand!
+export filaments3D, filaments3D!, filaments_new!, filaments_rand!
 
 """
-    filaments(asize = [100, 100, 100], Zfoc = asize[3] ÷ 2)
+    filaments3D!(obj; radius = 0.8, rand_offset=0.05, rel_theta=1.0, num_filaments=50, apply_seed=true, thickness=0.8)
 
 Create a 3D representation of filaments.
 
 # Arguments
-- `asize::Vector{Int}`: A vector of integers representing the size of the volume in which the filaments will be created. Default is [100, 100, 100].
-- `Zfoc::Int`: An integer representing the z-coordinate of the focal slice. Default is asize[3] ÷ 2.
+- `obj`: A 3D array representing the volume into which the filaments will be added.
+- `radius`: A tuple of real numbers (or a single real number) representing the relative radius of the volume in which the filaments will be created. 
+    Default is 0.8. If a tuple is used, the filamets will be created in a corresponding elliptical volume.
+    Note that the radius is only enforced in the version `filaments3D` which creates the array rather than adding.
+- `rand_offset`: A tuple of real numbers representing the random offsets of the filaments in relation to the size. Default is 0.05.
+- `rel_theta`: A real number representing the relative theta range of the filaments. Default is 1.0.
+- `num_filaments`: An integer representing the number of filaments to be created. Default is 50.
+- `apply_seed`: A boolean representing whether to apply a seed to the random number generator. Default is true.
+- `thickness`: A real number representing the thickness of the filaments in pixels. Default is 0.8.
 
-# Returns
-- `obj::Array{Float64}`: A 3D array representing the filaments.
+The result is added to the obj input array
 
 # Example
 ```julia
-filaments((200, 200, 200))
+
+# create a 100x100x100 volume with 10 filaments where only the central slice has a random arrangement of filaments
+julia> obj = rand(100,100,100); # create an array of random numbers
+julia> filaments3D!(obj; num_filaments=10, rel_theta=0, rand_offset=(0.1,0.1,0), intensity=2.0);
+
 ```
 """
-function filaments3D(sz = (128,128,128); num_filaments=10, seeding=true, Zfoc = sz[3] ÷ 2, thickness=0.8)
-    if seeding
+function filaments3D!(obj; intensity = 1.0, radius = 0.8, rand_offset=0.05, rel_theta=1.0, num_filaments=50, apply_seed=true, thickness=0.8)
+    # save the state of the rng to reset it after the function is done
+    rng = copy(Random.default_rng());
+    if apply_seed
         Random.seed!(42)
     end
 
-    obj = zeros(sz)  # Equivalent of newim
-    mid = sz .÷ 2
+    sz = size(obj)
+    mid = sz .÷ 2 .+1
 
-    # Focal Slice 
-    obj[mid[1] - floor(Int, 0.3 * sz[1]) : mid[1] + floor(Int, 0.3 * sz[1]), mid[2], Zfoc] .= 10
-    focalSlice = obj[:, :, Zfoc]
-
-    # Replace with Gaussian blurring function 
-    myspot2 = gaussian(size(focalSlice), offset=Tuple(mid[1:2]), sigma=thickness)  
-    focalSlice = conv_psf(focalSlice, myspot2)  # Assuming Images.jl has 'conv'
-
-    obj[:, :, Zfoc] = focalSlice
-
-    # ... (Implement similar logic for a, b, c, d )
-
-    # a=select_rois(rotate(focalSlice,pi/5),size(focalSlice));
-    a= rotate(focalSlice,pi/5)
-    # b=shift(select_rois(rotate(focalSlice,0.7*pi),size(focalSlice)),[-20 0 0]);
-    b=shift(rotate(focalSlice,0.7*pi),(-20, 0));
-    c=shift(rotate(focalSlice,0.1*pi),(10, -5));
-    d=shift(rotate(focalSlice,0.5),(0, 3));
-    focalSlice2=focalSlice+a+b+c+d;
-
-
-    obj[:,:,Zfoc]=focalSlice2;
-
-    # Additional Filaments
-    randAx = floor.(Int, 2 * rand(num_filaments)) .+ 1 
-    randShifts = rand(-20:20, num_filaments)
-    randRots = 5 .* rand(num_filaments)
-    tmp3d = zeros(Tuple(sz))
-    tmp3d[:, :, Zfoc] = a + b
-
-    for i in 1:num_filaments÷2
-        # Need implementations for rotate, select_rois, shift
-        tmp = shift(rotate(tmp3d, randRots[i], filter(!=(randAx[i]), Tuple([1, 2, 3]))), (randShifts[i], 0, 0))
-        obj += tmp  # Note: Julia indexing
+    # draw random lines equally distributed over the 3D sphere
+    for n in 1:num_filaments
+        phi = 2π*rand()
+        #theta should be scaled such that the distribution over the unit sphere is uniform
+        theta = acos(rel_theta*(1 -  2 * rand()));
+        pos = (sz.*radius./2) .* (sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
+        pos_offset = Tuple(rand_offset.*sz.*(rand(3).-0.5))
+        # println("Drawing line $n at theta = $theta and phi = $phi")
+        draw_line!(obj, pos.+pos_offset.+mid, mid.+pos_offset.-pos, thickness=thickness, intensity=intensity)
     end
 
-    # Similar loop for the second half of randAx
-    for i in num_filaments÷2:num_filaments
-        # Need implementations for rotate, select_rois, shift
-        tmp = shift(rotate(tmp3d, randRots[i]*pi, filter(!=(randAx[i]), Tuple([1, 2, 3]))), (0, randShifts[i], 0))
-        obj += tmp  # Note: Julia indexing
-    end
+    # reset the rng to the state before this function was called
+    copy!(Random.default_rng(), rng);
 
-    obj[obj .< 0] .= 0  # Clipping
     return obj
 end
 
-function filaments_rand!(arr; num_filaments=10, seeding=true)
-    if seeding
-        Random.seed!(42)
-    end
+"""
+    filaments3D([DataType], sz= (128, 128, 128), rand_offset=0.05, rel_theta=1.0, num_filaments=50, apply_seed=true, thickness=0.8)
+
+Create a 3D representation of filaments.
+
+# Arguments
+- `DataType`: The datatype of the output array. Default is Float32.
+- `sz`: A tuple of integers representing the size of the volume into which the filaments will be created. Default is (128, 128, 128).
+- `radius`: A tuple of real numbers (or a single real number) representing the relative radius of the volume in which the filaments will be created. 
+    Default is 0.8. If a tuple is used, the filamets will be created in a corresponding elliptical volume.
+    Note that the radius is only enforced in the version `filaments3D` which creates the array rather than adding.
+- `rand_offset`: A tuple of real numbers representing the random offsets of the filaments in relation to the size. Default is 0.05.
+- `rel_theta`: A real number representing the relative theta range of the filaments. Default is 1.0.
+- `num_filaments`: An integer representing the number of filaments to be created. Default is 50.
+- `apply_seed`: A boolean representing whether to apply a seed to the random number generator. Default is true.
+- `thickness`: A real number representing the thickness of the filaments in pixels. Default is 0.8.
+
+The result is added to the obj input array
+
+# Example
+```julia
+
+# create a 100x100x100 volume with 100 filaments where only the central slice has a random arrangement of filaments
+julia> obj = filaments3D((100,100,100); rel_theta=0, rand_offset=(0.2, 0.2, 0));
+
+# create a 100x100x100 volume with 100 filaments arranged in 3D
+julia> obj = filaments3D((100,100,100));
+
+```
+"""
+function filaments3D(::Type{T}, sz= (128, 128, 128); intensity=one(T), radius = 0.8, rand_offset=0.2, num_filaments=50, rel_theta=1.0, apply_seed=true, thickness=0.8) where {T}
+    obj = zeros(T, sz)
+    filaments3D!(obj; intensity=intensity, radius=radius, rand_offset=rand_offset, 
+        num_filaments=num_filaments, apply_seed=apply_seed, rel_theta=rel_theta, thickness) 
+    obj .*= (rr(eltype(obj), size(obj), scale=1 ./(sz .* radius./2)) .< 1.0)
+    return obj
+end
+
+function filaments3D(sz= (128, 128, 128); intensity=one(Float32), radius = 0.8, rand_offset=0.2, num_filaments=50, rel_theta=1.0, apply_seed=true, thickness=0.8)
+    return filaments3D(Float32, sz; intensity=intensity, radius=radius, rand_offset=rand_offset,
+        num_filaments=num_filaments, apply_seed=apply_seed, thickness, rel_theta=rel_theta) 
+end
+
+
+# function filaments_rand!(arr; num_filaments=10, seeding=true)
+#     if seeding
+#         Random.seed!(42)
+#     end
     
-    for i in 1:num_filaments
-        #println("Drawing line $i")
-        draw_line!(arr, Tuple(rand(10.0:size(arr, 1)-10, (1, 3))),  Tuple(rand(10.0:size(arr, 1)-10, (1, 3))), thickness= rand(0.0:2.0))
-    end
+#     for i in 1:num_filaments
+#         #println("Drawing line $i")
+#         draw_line!(arr, Tuple(rand(10.0:size(arr, 1)-10, (1, 3))),  Tuple(rand(10.0:size(arr, 1)-10, (1, 3))), thickness= rand(0.0:2.0))
+#     end
 
-end
-
-
-function sqr_dist_to_line(p::CartesianIndex, start, n)
-    # Implementations for is_on_line
-    d = Tuple(p) .- start
-    return sum(abs2.(d .- sum(d.*n).*n)), sum(d.*n), sqrt(sum(abs2.(sum(d.*n).*n)));
-end
-
-function draw_line!(arr, start, stop; thickness=0.5)
-    direction = stop .- start
-    line_length = sqrt(sum(abs2.(direction)))
-    n = direction ./ line_length
-    # Implementations for draw_line
-    for p in CartesianIndices(arr)
-        if (sqrt(sum(abs2.(Tuple(p) .- start))) < 2*thickness  || sqrt(sum(abs2.(Tuple(p) .- stop))) < 2*thickness)
-            arr[p] = exp(-min(sum(abs2.(Tuple(p) .- start)), sum(abs2.(Tuple(p) .- stop)))/(2*thickness^2));
-        end
-
-        d2, t =sqr_dist_to_line(p, start, n)
-        if (t > 0 && t < line_length && d2 < 4*thickness^2)
-            arr[p] = exp(-d2/(2*thickness^2));
-        end
-
-    end
-end
-
+# end

@@ -1,63 +1,99 @@
 using Cairo
-using FourierTools:filter_gaussian
+# using FourierTools:filter_gaussian
 
-export annotation_3D, init_annonate, annotate_string!, matrix_read, test_resolution_sample
+export annotation_3D, init_annonate, annotate_string!, matrix_read, resolution_offset
 
 """
-    annotation_3D(sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=120.0)
+    annotation_3D(sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9)
+
+    Create a 3D array of alphabets or numbers with varying font sizes and background levels.
+
+# Arguments
+- `sz::Tuple`: A tuple of three integers representing the size of the volume. Default is (128, 128, 1).
+- `numbers_or_alphabets::String`: A string representing whether to use alphabets or numbers. Default is "alphabets".
+- `font_size::Float64`: A float representing the font size. Default is the minimum of the first two elements of `sz` minus 10.0.
+- `bkg::Float64`: A float representing the background level. Default is 0.9.
+
+# Returns
+    A 3D array of alphabets or numbers with varying font sizes and background levels.
     
-    repeat(reshape(t, (100, 400, 1)), outer=4)
 """
+function annotation_3D!(arr; numbers_or_alphabets="alphabets", font_size=Float64.(minimum(size(arr)[1:2]))-10.0, bkg=0.9)
 
-function annotation_3D(sz=(128,128, 1); filtering=false, numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9)
-    arr = zeros(sz)
-
-    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    sz = size(arr);
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstubwxyz"
 
     cr, c = init_annonate(sz)
 
     if numbers_or_alphabets == "alphabets"
-        if size(arr)[3] > 26
+        if size(arr)[3] > length(alphabet)
             println("Number of slices is greater than 26. Please choose numbers instead of alphabets.")
             return
         end
 
-        for i1 in 1:size(arr)[3]
-            
-            annotate_string!(cr, c, arr, string(alphabet[i1]), font_size, i1, bkg) # arr[:, :, i1] =
+        for i1 in 1:sz[3]
+            modi = mod(i1-1, length(alphabet)) +1
+            annotate_string!(cr, c, arr, string(alphabet[modi]), font_size, i1, bkg) # arr[:, :, i1] =
         end
         
     elseif numbers_or_alphabets == "numbers"
-        for i1 in 1:size(arr)[3]
+        for i1 in 1:sz[3]
             annotate_string!(cr, c, arr, string(i1), font_size, i1, bkg)
         end
     end
 
-    if filtering
-        for i1 in 1:size(arr)[3]
-            arr[:, :, i1] = filter_gaussian(arr[:, :, i1], sigma=5.0)
-        end
-        filter_gaussian(arr, sigma=0.5)
-    else
-        return arr
-    end
-
+    return arr
 end
 
-function test_resolution_sample(; sz_each_section=(100, 100), num_slices=1, numbers_or_alphabets="alphabets")
-    sz = (sz_each_section..., num_slices)
+function annotation_3D(::Type{T}, sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9) where {T}
+    arr = zeros(T, sz)
+    annotation_3D!(arr; numbers_or_alphabets=numbers_or_alphabets, font_size=font_size, bkg=bkg)
+    return arr
+end
 
-    arr_final = zeros(length(1:10)*sz_each_section[1], length(1:10)*sz_each_section[2], sz[3])
-    for font in 1:10 #20:10:100
-        for bkg_lvl in 1:10
-            arr_final[(font-1)*100+1:font*100, (bkg_lvl-1)*100+1:bkg_lvl*100, :] .= annotation_3D(sz, numbers_or_alphabets=numbers_or_alphabets, font_size=Float64(font*10.0), bkg=(bkg_lvl-1.0)/10.0) 
+function annotation_3D(sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9)
+     return annotation_3D(Float32, sz; numbers_or_alphabets=numbers_or_alphabets, font_size=font_size, bkg=bkg)
+end
+
+"""
+    resolution_offset(sz = (100, 100, 1); numbers_or_alphabets="alphabets")
+
+    Create a 3D array of alphabets or numbers with varying font sizes and background levels.
+
+# Arguments
+- `sz::Tuple`: A tuple of three integers representing the size of the volume. Default is (100, 100, 1).
+    Note that the first two elements are multiplied by 10 to defined the array size. The third elements will contain varying alphabets or numbers.
+- `numbers_or_alphabets::String`: A string representing whether to use alphabets or numbers. Default is "alphabets".
+
+# Returns
+    A 3D array of alphabets or numbers with varying font sizes and background levels.
+
+# Example
+
+```julia
+julia> resolution_test(; sz_each_section=(100, 100), num_slices=1, numbers_or_alphabets="alphabets")
+```
+"""
+function resolution_offset(::Type{T}, sz = (512, 512, 1); divisions = (8, 8), numbers_or_alphabets="alphabets") where {T}
+    arr_final = zeros(T, sz)
+    size_per_division = sz[1:2].÷divisions
+    letter_space = (size_per_division..., sz[3])
+        
+    for font in 1:divisions[1]
+        for bkg_lvl in 1:divisions[2]
+            my_bg = (bkg_lvl-1.0)/divisions[2]
+            my_fs = Float64(size_per_division[1]*font/divisions[1])
+            arr_final[(font-1)*size_per_division[1]+1:font*size_per_division[1],
+                (bkg_lvl-1)*size_per_division[2]+1:bkg_lvl*size_per_division[2], :] .= annotation_3D(letter_space, numbers_or_alphabets=numbers_or_alphabets, font_size=my_fs, bkg=my_bg) 
         end
     end
 
-    return arr_final
-    
+    return arr_final    
 end
 
+function resolution_offset(sz = (512, 512, 1); divisions = (16,16), numbers_or_alphabets="alphabets") 
+    return resolution_offset(Float32, sz; divisions=divisions, numbers_or_alphabets=numbers_or_alphabets)
+end
 
 
 function init_annonate(sz)
@@ -69,8 +105,9 @@ function init_annonate(sz)
     return cr, c
 end
 
-function annotate_string!(cr, c, arr, string_to_write::AbstractString, font_size::Float64, i1, bkg=bkg)
+function annotate_string!(cr, c, arr, string_to_write::AbstractString, font_size::Float64, i1, bkg)
 
+    println("annotating $string_to_write at fs $font_size and bg $bkg")
     save(cr);
     set_source_rgb(cr, bkg, bkg, bkg);    # light gray
     rectangle(cr, 0.0, 0.0, c.height, c.width); # background
@@ -78,12 +115,10 @@ function annotate_string!(cr, c, arr, string_to_write::AbstractString, font_size
     restore(cr);
 
     save(cr);
-    select_font_face(cr, "Sans", Cairo.FONT_SLANT_NORMAL,
-    Cairo.FONT_WEIGHT_NORMAL);
+    select_font_face(cr, "Sans", Cairo.FONT_SLANT_NORMAL, Cairo.FONT_WEIGHT_NORMAL);
     set_source_rgb(cr, 1.0, 1.0, 1.0);
     set_font_size(cr, font_size);
     extents = text_extents(cr, string_to_write);
-
 
     xy = ((c.height, c.width) .÷ 2 ) .- (extents[3]/2 + extents[1], (extents[4]/2 + extents[2]));
     #y = (50.0-(extents[4]/2 + extents[2]);
