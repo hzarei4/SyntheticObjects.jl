@@ -1,7 +1,7 @@
 using IndexFunArrays:gaussian
 using Random
 
-export filaments3D, filaments3D!, filaments_new!, filaments_rand!
+export filaments3D, filaments3D!
 
 """
     filaments3D!(obj; radius = 0.8, rand_offset=0.05, rel_theta=1.0, num_filaments=50, apply_seed=true, thickness=0.8)

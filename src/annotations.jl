@@ -21,7 +21,7 @@ export annotation_3D, init_annonate, annotate_string!, matrix_read, resolution_o
 function annotation_3D!(arr; numbers_or_alphabets="alphabets", font_size=Float64.(minimum(size(arr)[1:2]))-10.0, bkg=0.9)
 
     sz = size(arr);
-    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstubwxyz"
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
     cr, c = init_annonate(sz)
 
@@ -109,8 +109,8 @@ function annotate_string!(cr, c, arr, string_to_write::AbstractString, font_size
 
     println("annotating $string_to_write at fs $font_size and bg $bkg")
     save(cr);
-    set_source_rgb(cr, bkg, bkg, bkg);    # light gray
-    rectangle(cr, 0.0, 0.0, c.height, c.width); # background
+    set_source_rgb(cr, bkg, bkg, bkg);    # background color
+    rectangle(cr, 0.0, 0.0, c.height, c.width); # background boundry
     fill(cr);
     restore(cr);
 
@@ -121,19 +121,19 @@ function annotate_string!(cr, c, arr, string_to_write::AbstractString, font_size
     extents = text_extents(cr, string_to_write);
 
     xy = ((c.height, c.width) .÷ 2 ) .- (extents[3]/2 + extents[1], (extents[4]/2 + extents[2]));
-    #y = (50.0-(extents[4]/2 + extents[2]);
 
     move_to(cr, xy...);
     show_text(cr, string_to_write);
 
-    arr[:, :, i1] = matrix_read(c)./maximum(matrix_read(c))
+    arr[:, :, i1] = matrix_read(c)#./maximum(matrix_read(c))
 
-    set_source_rgb(cr, 0.0, 0.0, 0.0);    # light gray
+    set_source_rgb(cr, 0.0, 0.0, 0.0);    # white
     rectangle(cr, 0.0, 0.0, c.height, c.width); # background
     fill(cr);
     restore(cr);
+    save(cr);
 
-    return cr, c, arr
+    #return cr, c, arr
 end
 
 """
@@ -145,7 +145,7 @@ function matrix_read(surface)
 	w = Int(surface.width)
 	h = Int(surface.height)
 	z = zeros(UInt32,w,h)
-	surf = CairoImageSurface(z, Cairo.FORMAT_ARGB32)
+	surf = CairoImageSurface(z, Cairo.FORMAT_RGB24)
 
     cr = CairoContext(surf)
     set_source_surface(cr,surface,0,0)
