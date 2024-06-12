@@ -19,7 +19,7 @@ Generates a 2D or 3D representation of a spokes object.
 - `obj2::Array{Float64}`: A 2D or 3D array representing the spokes object.
 
 # Example
-```julia
+```jldoctest
 spokes_object((512, 512), 30, false, false)
 ```
 """

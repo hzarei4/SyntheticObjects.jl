@@ -15,7 +15,7 @@ Create a 3D representation of a hollow sphere.
 - `sph::Array{Float64}`: A 3D array representing the hollow sphere.
 
 # Example
-```julia
+```jldoctest
 # create a centered sphere of 80% of the object size with a thickness of 0.8 pixels
 julia> obj = zeros(Float64, (128, 128, 128));
 julia> hollow_sphere(obj, 0.8)
@@ -42,7 +42,7 @@ Create a 3D representation of a hollow sphere.
 - `sph::Array{Float64}`: A 3D array representing the hollow sphere.
 
 # Example
-```julia
+```jldoctest
 # create a centered sphere of 80% of the object size with a thickness of 0.8 pixels
 julia> hollow_sphere()
 ```

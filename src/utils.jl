@@ -55,7 +55,7 @@ Draw a sphere in a 3D array by adding a Gaussian profile to the array.
 
 # Example
 
-```julia
+```jldoctest
 julia> arr = zeros(Float32, (128, 128, 128));
 julia> draw_sphere!(arr, 10);
 

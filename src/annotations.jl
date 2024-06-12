@@ -70,7 +70,7 @@ end
 
 # Example
 
-```julia
+```jldoctest
 julia> resolution_test(; sz_each_section=(100, 100), num_slices=1, numbers_or_alphabets="alphabets")
 ```
 """

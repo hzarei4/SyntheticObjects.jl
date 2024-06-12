@@ -77,7 +77,7 @@ Create a 3D representation of filaments.
 The result is added to the obj input array
 
 # Example
-```julia
+```jldoctest
 
 # create a 100x100x100 volume with 100 filaments where only the central slice has a random arrangement of filaments
 julia> obj = filaments3D((100,100,100); rel_theta=0, rand_offset=(0.2, 0.2, 0));

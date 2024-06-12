@@ -16,7 +16,7 @@ Create a 3D representation of a pollen grain.
 - `ret::Array{Float64}`: A 3D array representing the pollen grain.
 
 # Example
-```julia
+```jldoctest
 Pollen3D((256, 256, 256), 0.0, 0.0)
 ```
 """
