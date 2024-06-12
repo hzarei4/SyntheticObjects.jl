@@ -11,7 +11,7 @@ jobs:
         with:
           version: "1.10.4"
       - uses: julia-actions/julia-buildpkg@v1
-      #- uses: julia-actions/julia-runtest@v1
+      - uses: julia-actions/julia-runtest@v1
       #- uses: julia-actions/julia-processcoverage@v1
 
             
