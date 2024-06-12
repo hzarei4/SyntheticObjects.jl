@@ -1,4 +1,4 @@
-export hollow_sphere, object_3D
+export hollow_sphere!, hollow_sphere, object_3D
 
 """
 hollow_sphere(obj, radius=0.8, center=sz.÷2 .+1; thickness=0.8)

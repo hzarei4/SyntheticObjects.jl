@@ -1,10 +1,10 @@
 using Cairo
 # using FourierTools:filter_gaussian
 
-export annotation_3D, init_annonate, annotate_string!, matrix_read, resolution_offset
+export annotation_3D!, annotation_3D, init_annonate, annotate_string!, matrix_read, resolution_offset
 
 """
-    annotation_3D(sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9)
+    annotation_3D!(sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9)
 
     Create a 3D array of alphabets or numbers with varying font sizes and background levels.
 
