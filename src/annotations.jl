@@ -42,13 +42,13 @@ function annotation_3D!(arr; numbers_or_alphabets="alphabets", font_size=Float64
         end
     end
 
-    return arr
+    return (arr./maximum(arr))
 end
 
 function annotation_3D(::Type{T}, sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9) where {T}
     arr = zeros(T, sz)
     annotation_3D!(arr; numbers_or_alphabets=numbers_or_alphabets, font_size=font_size, bkg=bkg)
-    return arr
+    return (arr./maximum(arr))
 end
 
 function annotation_3D(sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9)
@@ -107,7 +107,7 @@ end
 
 function annotate_string!(cr, c, arr, string_to_write::AbstractString, font_size::Float64, i1, bkg)
 
-    println("annotating $string_to_write at fs $font_size and bg $bkg")
+    # println("annotating $string_to_write at fs $font_size and bg $bkg")
     save(cr);
     set_source_rgb(cr, bkg, bkg, bkg);    # background color
     rectangle(cr, 0.0, 0.0, c.height, c.width); # background boundry
