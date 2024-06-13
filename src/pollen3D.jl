@@ -3,7 +3,7 @@ using IndexFunArrays:rr, xx, yy, zz, phiphi
 export pollen3D, pollen3D!
 
 """
-    Pollen3D(sv = (128, 128, 128), dphi::Float64=0.0, dtheta::Float64=0.0)
+    pollen3D(sv = (128, 128, 128), dphi::Float64=0.0, dtheta::Float64=0.0)
 
 Create a 3D representation of a pollen grain.
 
@@ -17,7 +17,7 @@ Create a 3D representation of a pollen grain.
 
 # Example
 ```jldoctest
-Pollen3D((256, 256, 256), 0.0, 0.0)
+pollen3D((256, 256, 256), 0.0, 0.0)
 ```
 """
 function pollen3D(sv = (128, 128, 128); dphi=0.0, dtheta=0.0, thickness=0.8)

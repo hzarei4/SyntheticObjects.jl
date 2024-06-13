@@ -1,12 +1,10 @@
 name: CI
 on:
-  pull_request:
-    branches:
-      - master
   push:
     branches:
-      - master
-    tags: '*'
+      - main
+    tags: ['*']
+  pull_request:
 concurrency:
   # Skip intermediate builds: always.
   # Cancel intermediate builds: only if it is a pull request build.
@@ -22,7 +20,7 @@ jobs:
         version:
           - '1'
         os:
-          - [ubuntu-latest, windows-latest, macos-latest] 
+          - ubuntu-latest
         arch:
           - x64
     steps:
@@ -40,15 +38,17 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           file: lcov.info
+      
+
   docs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v2
-        - uses: julia-actions/setup-julia@v1
-          with:
-            version: "1.9"
-        - uses: julia-actions/julia-docdeploy@releases/v1
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+      - uses: actions/checkout@v2
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: "1"
+      - uses: julia-actions/julia-docdeploy@releases/v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
