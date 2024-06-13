@@ -7,11 +7,7 @@ makedocs(sitename="SyntheticObjects.jl",
         , pages = Any[
             "SyntheticObjects.jl" => "index.md",
         ]
-        , 
-        #make = Documenter.make_julia_cmd()
         )
 
 
-deploydocs(repo = "github.com/hzarei4/SyntheticObjects.jl.git",
-            target = "gh-pages",
-            )
+deploydocs(repo = "github.com/hzarei4/SyntheticObjects.jl.git")
