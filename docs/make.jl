@@ -6,6 +6,7 @@ makedocs(sitename="SyntheticObjects.jl",
         modules = [SyntheticObjects]
         , pages = Any[
             "SyntheticObjects.jl" => "index.md",
+            "API" => "function_references/objects.md",
         ]
         )
 
