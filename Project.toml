@@ -1,6 +1,6 @@
 name = "SyntheticObjects"
 uuid = "e7028c27-0967-45e9-8fdb-dbc10ccb2b0a"
-authors = ["Hossein Zarei Oshtolagh"]
+authors = ["Hossein Zarei Oshtolagh, Rainer Heintzmann"]
 version = "1.0.0"
 
 [deps]
