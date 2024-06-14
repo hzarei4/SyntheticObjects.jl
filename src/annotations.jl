@@ -1,7 +1,7 @@
 using Cairo
 # using FourierTools:filter_gaussian
 
-export annotation_3D!, annotation_3D, init_annonate, annotate_string!, matrix_read, resolution_offset
+export resolution_test, annotation_3D!, matrix_read, annotation_3D
 
 """
     annotation_3D!(sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9)
@@ -42,7 +42,7 @@ function annotation_3D!(arr; numbers_or_alphabets="alphabets", font_size=Float64
         end
     end
 
-    return (arr./maximum(arr))
+    return arr#(arr./maximum(arr))
 end
 
 function annotation_3D(::Type{T}, sz=(128,128, 1); numbers_or_alphabets="alphabets", font_size=Float64.(minimum(sz[1:2]))-10.0, bkg=0.9) where {T}
@@ -56,7 +56,7 @@ function annotation_3D(sz=(128,128, 1); numbers_or_alphabets="alphabets", font_s
 end
 
 """
-    resolution_offset(sz = (100, 100, 1); numbers_or_alphabets="alphabets")
+    resolution_test(sz = (100, 100, 1); numbers_or_alphabets="alphabets")
 
     Create a 3D array of alphabets or numbers with varying font sizes and background levels.
 
@@ -74,7 +74,7 @@ end
 julia> resolution_test(; sz_each_section=(100, 100), num_slices=1, numbers_or_alphabets="alphabets")
 ```
 """
-function resolution_offset(::Type{T}, sz = (512, 512, 1); divisions = (8, 8), numbers_or_alphabets="alphabets") where {T}
+function resolution_test(::Type{T}, sz = (512, 512, 1); divisions = (8, 8), numbers_or_alphabets="alphabets") where {T}
     arr_final = zeros(T, sz)
     size_per_division = sz[1:2].÷divisions
     letter_space = (size_per_division..., sz[3])
@@ -88,18 +88,17 @@ function resolution_offset(::Type{T}, sz = (512, 512, 1); divisions = (8, 8), nu
         end
     end
 
-    return arr_final    
+    return ((arr_final .- minimum(arr_final)) ./ maximum(arr_final .- minimum(arr_final)))
 end
 
-function resolution_offset(sz = (512, 512, 1); divisions = (16,16), numbers_or_alphabets="alphabets") 
-    return resolution_offset(Float32, sz; divisions=divisions, numbers_or_alphabets=numbers_or_alphabets)
-end
+# TODO make the size proportional to the divisions
 
+resolution_test(sz::Tuple{Int, Int}; kwargs...) = resolution_test(Tuple((sz..., 1)); kwargs...)[:, :, 1]
+resolution_test(sz; kwargs...) = resolution_test(Float32, sz; kwargs...)
 
 function init_annonate(sz)
     c = CairoRGBSurface(sz[1:2]...);
     cr = CairoContext(c);
-
     save(cr);
 
     return cr, c

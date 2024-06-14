@@ -1,50 +1,42 @@
-# SyntheticObjects.jl Documentation
+# SyntheticObjects.jl
 
-```@docs
-pollen3D(x)
-```
 
-```@docs
-object_3D
-```
+This package creates several synthetic objects in Julia to further process in the image processing routines.
 
-```@docs
-filaments3D 
-```
+## Overview
+Using this package, user can generate different objetcs for the pupose of image processing. This package contains 2D as well as 3D samples
+of different objects (Numbers, Alphabets, and objects).
 
-```@docs
-draw_sphere!
-```
 
-```@docs
-annotation_3D!
-```
+## Installation
+`SyntheticObjects.jl` can be installed using the command:
 
-```@docs
-draw_line!
-```
-
-```@docs
-filaments3D!
+```julia
+julia> ] add SyntheticObjects
 ```
 
 
-```@docs
-matrix_read
-```
+## Examples
 
-```@docs
-spokes_object 
-```
+```julia
+julia> using SyntheticObjects
 
-```@docs
-hollow_sphere! 
-```
+# this generates a pollen grain object array
+arr_pollen = pollen3D((256, 256, 256));
 
-```@docs
-resolution_offset 
-```
 
-```@docs
-hollow_sphere  
+# a set of filaments in 3D:
+arr_filaments = filaments3D((256,256,256))
+
+# and so on ...     
 ```
+### Image of the pollen object (plotted using [`View5D.jl`](https://github.com/RainerHeintzmann/View5D.jl) package)
+![](assets/arr_pollen.png)
+
+### Image of the filaments (plotted using [`View5D.jl`](https://github.com/RainerHeintzmann/View5D.jl) package)
+![](assets/arr_filaments.png)
+
+
+
+### Image of the resolution test (plotted using [`View5D.jl`](https://github.com/RainerHeintzmann/View5D.jl) package)
+![](assets/arr_resolution_test.png)

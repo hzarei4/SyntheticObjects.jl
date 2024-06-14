@@ -28,3 +28,16 @@ arr_pollen = pollen3D((256, 256, 256));
 arr_filaments = filaments3D((100,100,100); rel_theta=0, rand_offset=(0.2, 0.2, 0))
 ```
 
+
+
+[docs-dev-img]: https://img.shields.io/badge/docs-dev-orange.svg 
+[docs-dev-url]: https://hzarei4.github.io/SyntheticObjects.jl/dev/ 
+
+[docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg 
+[docs-stable-url]: https://hzarei4.github.io/SyntheticObjects.jl/stable/
+
+[codecov-img]: https://codecov.io/gh/hzarei4/SyntheticObjects.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/hzarei4/SyntheticObjects.jl
+
+[CI-img]: https://github.com/hzarei4/SyntheticObjects.jl/workflows/CI/badge.svg
+[CI-url]: https://github.com/hzarei4/SyntheticObjects.jl/actions?query=workflow%3ACI 
