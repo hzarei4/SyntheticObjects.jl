@@ -22,11 +22,11 @@ julia> ] add SyntheticObjects
 julia> using SyntheticObjects
 
 # this generates a pollen grain object array
-arr_pollen = pollen3D((256, 256, 256));
+arr_pollen = pollen((256, 256, 256));
 
 
 # a set of filaments in 3D:
-arr_filaments = filaments3D((256,256,256))
+arr_filaments = filaments((256,256,256))
 
 # and so on ...     
 ```

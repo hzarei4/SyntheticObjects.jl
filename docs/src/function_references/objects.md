@@ -1,11 +1,11 @@
 # Objects
 ```@docs
-pollen3D
+pollen
 object_3D
-filaments3D 
+filaments
 draw_sphere!
 draw_line!
-filaments3D!
+filaments!
 spokes_object 
 hollow_sphere! 
 resolution_test
