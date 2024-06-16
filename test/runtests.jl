@@ -3,25 +3,25 @@ using Test
 
 @testset "Pollen" begin
     sz = (128, 128, 128)
-    pollen = pollen3D(sz)
-    @test size(pollen) == sz
-    @test typeof(pollen) == Array{Float32, 3}
-    @test maximum(pollen) ≈ 1.0
-    @test minimum(pollen) == 0.0
+    arr_pollen = pollen(sz)
+    @test size(arr_pollen) == sz
+    @test typeof(arr_pollen) == Array{Float32, 3}
+    @test maximum(arr_pollen) ≈ 1.0
+    @test minimum(arr_pollen) == 0.0
     
 end
 
 @testset "Filaments" begin
     sz = (128, 128, 128)
-    filaments = filaments3D(sz)
-    @test size(filaments) == sz
-    @test typeof(filaments) == Array{Float32, 3}
+    arr_filaments = filaments(sz)
+    @test size(arr_filaments) == sz
+    @test typeof(arr_filaments) == Array{Float32, 3}
 end
 
-@testset "Annotations" begin
+@testset "ResolutionTest" begin
     sz = (128, 128, 5)
-    annotation = annotation_3D(sz)
-    @test size(annotation) == sz
-    @test typeof(annotation) == Array{Float32, 3}
-    @test maximum(annotation) ≈ 1.0
+    arr_res_test = resolution_test(sz)
+    @test size(arr_res_test) == sz
+    @test typeof(arr_res_test) == Array{Float32, 3}
+    @test maximum(arr_res_test) ≈ 1.0
 end

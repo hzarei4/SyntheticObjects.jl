@@ -1,7 +1,7 @@
 name = "SyntheticObjects"
 uuid = "e7028c27-0967-45e9-8fdb-dbc10ccb2b0a"
 authors = ["Hossein Zarei Oshtolagh, Rainer Heintzmann"]
-version = "1.0.0"
+version = "0.1.0"
 
 [deps]
 Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"

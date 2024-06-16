@@ -89,16 +89,18 @@ end
 function gauss_value(myd, sigma2, intensity, thickness, filled)::typeof(myd)
     ret = let 
         if (filled)
-            if (myd < 0)
+            if (myd > 0)
                 intensity;
             elseif (myd < 2*thickness)
                 intensity*exp(-myd*myd/sigma2); # Gaussian profile
+            else
+                0.0
             end
         else
             if (abs.(myd) < 2*thickness)
                 intensity*exp(-myd*myd/sigma2); # Gaussian profile
             else
-                0
+                0.0
             end
         end
     end    
