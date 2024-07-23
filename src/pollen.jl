@@ -26,7 +26,7 @@ pollen((256, 256, 256), 0.0, 0.0)
 pollen(sv; dphi=0.0, dtheta=0.0, thickness=0.8, rel_size=1.0, intensity=1.0, filled=false) = pollen(Float32, sv; dphi=dphi, dtheta=dtheta, thickness=thickness, rel_size=rel_size, intensity=intensity, filled=filled)
 pollen(sz::Tuple{Int, Int}; kwargs...) = pollen(Tuple((sz..., 1)); kwargs...)[:, :, 1]
 
-function pollen(::Type{T}, sv = (128, 128, 128); dphi=0.0, dtheta=0.0, thickness=0.8, rel_size=1.0, intensity=1.0, filled=false) where {T}
+function pollen(::Type{T}=Float32, sv = (128, 128, 128); dphi=0.0, dtheta=0.0, thickness=0.8, rel_size=1.0, intensity=1.0, filled=false) where {T}
     obj = zeros(T, sv)
     pollen!(obj; dphi=dphi, dtheta=dtheta, thickness=thickness, rel_size=rel_size, intensity=intensity, filled=filled)
     return obj
@@ -49,7 +49,7 @@ function pollen!(arr; dphi=0.0, dtheta=0.0, thickness = 0.8, rel_size=1.0, inten
     b = abs.(sin.((phi .+ dphi) .* sqrt.(max.(zero(eltype(arr)), 20^2 .* cos.(theta))) .- theta .+ pi/2)) 
 
     # calculate the relative distance to the surface of the pollen grain
-    dc = ((0.4*sv[1] .+ (a .* b).^5 * sv[1]/20.0) .+ cos.(phi .+ dphi) .* sv[1]/20) .- (rr(sv).*(1/rel_size))
+    dc = ((0.3*sv[1] .+ (a .* b).^5 * sv[1]/20.0) .+ cos.(phi .+ dphi) .* sv[1]/20) .- (rr(sv).*(1/rel_size))
 
 
     sigma2 = 2*thickness^2

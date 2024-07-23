@@ -89,7 +89,7 @@ julia> obj = filaments((100,100,100));
 
 ```
 """
-function filaments(::Type{T}, sz= (128, 128, 128); intensity=one(T), radius = 0.8, rand_offset=0.2, num_filaments=50, rel_theta=1.0, apply_seed=true, thickness=0.8) where {T}
+function filaments(::Type{T} = Float32, sz= (128, 128, 128); intensity=one(T), radius = 0.8, rand_offset=0.2, num_filaments=50, rel_theta=1.0, apply_seed=true, thickness=0.8) where {T}
     obj = zeros(T, sz)
     filaments!(obj; intensity=intensity, radius=radius, rand_offset=rand_offset, 
         num_filaments=num_filaments, apply_seed=apply_seed, rel_theta=rel_theta, thickness) 

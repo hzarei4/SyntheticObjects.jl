@@ -2,7 +2,7 @@
 
 julia_version = "1.10.4"
 manifest_format = "2.0"
-project_hash = "b82a7dfc80dd79f595483ae5f1c312662406f9c4"
+project_hash = "f72dfc455d2ef5bbd45f8325620475f83d82b3a9"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -2052,7 +2052,7 @@ version = "7.2.1+1"
 deps = ["Cairo", "IndexFunArrays", "Random"]
 path = ".."
 uuid = "e7028c27-0967-45e9-8fdb-dbc10ccb2b0a"
-version = "1.0.0"
+version = "0.1.0"
 
 [[deps.TOML]]
 deps = ["Dates"]
@@ -2132,6 +2132,11 @@ version = "0.4.80"
     LazyArrays = "5078a376-72f3-5289-bfd5-ec5146d43c02"
     OnlineStatsBase = "925886fa-5bf2-5e8e-b522-a9147a512338"
     Referenceables = "42d2dcc6-99eb-4e98-b66c-637b7d73030e"
+
+[[deps.Tricks]]
+git-tree-sha1 = "eae1bb484cd63b36999ee58be2de6c178105112f"
+uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
+version = "0.1.8"
 
 [[deps.TriplotBase]]
 git-tree-sha1 = "4d4ed7f294cda19382ff7de4c137d24d16adc89b"

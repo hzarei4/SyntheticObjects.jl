@@ -30,11 +30,11 @@ function draw_line!(arr, start, stop; thickness=0.5, intensity=one(eltype(arr)))
         d2, t =sqr_dist_to_line(p, start, n)
         if (d2 < 4*thickness^2)
             if (t > 0 && t < line_length)
-                arr[p] += intensity*exp(-d2/sigma2); # Gaussian profile
+                arr[p] += intensity *exp(-d2/sigma2); # Gaussian profile
             elseif (t < 0 && t > -2*thickness)
-                arr[p] += intensity*exp(-d2/sigma2)*exp(-(t*t)/sigma2); # Gaussian profile
+                arr[p] += intensity *exp(-d2/sigma2)*exp(-(t*t)/sigma2); # Gaussian profile
             elseif (t > line_length && t < line_length + 2*thickness)
-                arr[p] += intensity*exp(-d2/sigma2)*exp(-(t-line_length)^2/sigma2); # Gaussian profile
+                arr[p] += intensity *exp(-d2/sigma2)*exp(-(t-line_length)^2/sigma2); # Gaussian profile
             end
         end
     end
